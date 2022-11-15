@@ -1,65 +1,101 @@
-import { LikeOutlined, MessageOutlined, StarOutlined } from '@ant-design/icons';
-import { Avatar, List, Space } from 'antd';
-import React from 'react';
+import { StarOutlined, GlobalOutlined } from '@ant-design/icons'
+import { Avatar, List, Space } from 'antd'
+import PubSub from 'pubsub-js'
+import React, { useEffect, useState } from 'react'
+import { useNavigate } from 'react-router-dom'
 
-const data = Array.from({ length: 23 }).map((_, i) => ({
-  href: 'https://ant.design',
-  title: `ant design part ${i}`,
-  avatar: 'https://joeschmoe.io/api/v1/random',
-  description:
-    'Ant Design, a design language for background applications, is refined by Ant UED Team.',
-  content:
-    'We supply a series of design principles, practical patterns and high quality design resources (Sketch and Axure), to help people create their product prototypes beautifully and efficiently.',
-}));
-
-const IconText = ({ icon, text }: { icon: React.FC; text: string }) => (
+const IconText = ({ icon, text }: { icon: React.FC, text: string }) => (
   <Space>
     {React.createElement(icon)}
     {text}
   </Space>
-);
-
-const FooterLayout: React.FC = () => (
-  <List
-    itemLayout="vertical"
-    size="large"
-    pagination={{
-      onChange: page => {
-        console.log(page);
+)
+const FooterLayout: React.FC = () => {
+  const [results, setResults] = useState({})
+  // 参数
+  useEffect(() => {
+    PubSub.subscribe('results', (_, data) => {
+      // console.log(results)
+      setResults(data)
+    })
+  }, [])
+  const navgate = useNavigate()
+  const goDetails = (fullname) => {
+    navgate('/details', {
+      replace: false,
+      state: {
+        fullname: fullname,
       },
-      pageSize: 3,
-    }}
-    dataSource={data}
-    footer={
-      <div>
-        <b>ant design</b> footer part
-      </div>
-    }
-    renderItem={item => (
-      <List.Item
-        key={item.title}
-        actions={[
-          <IconText icon={StarOutlined} text="156" key="list-vertical-star-o" />,
-          <IconText icon={LikeOutlined} text="156" key="list-vertical-like-o" />,
-          <IconText icon={MessageOutlined} text="2" key="list-vertical-message" />,
-        ]}
-        extra={
-          <img
-            width={272}
-            alt="logo"
-            src="https://gw.alipayobjects.com/zos/rmsportal/mqaQswcyDLcXyDKnZfES.png"
+    })
+    // console.log(fullname)
+  }
+  // 组件值,需要的数据
+  const data = results?.data?.map((item) => ({
+    href: `${item.html_url}`,
+    title: `${item.name}`,
+    avatar: `${item.owner.avatar_url}`,
+    description: `${item.description}`,
+    language: `${item.language}`,
+    forks_count: `${item.forks_count}`,
+    fullname: `${item.full_name}`,
+  }))
+  return (
+    <List
+      itemLayout="vertical"
+      size="large"
+      pagination={{
+        onChange: (page) => {
+          console.log(page)
+        },
+        pageSize: 3,
+      }}
+      dataSource={data}
+      footer={
+        <div>
+          <b>Koria</b> &copy
+        </div>
+      }
+      renderItem={(item) => (
+        <List.Item
+          key={item.title}
+          actions={[
+            <IconText
+              icon={StarOutlined}
+              text={item.forks_count}
+              key="list-vertical-star-o"
+            />,
+            <IconText
+              icon={GlobalOutlined}
+              text={item.language}
+              key="list-vertical-language-o"
+            />,
+          ]}
+          extra={
+            <img
+              width={200}
+              alt="logo"
+              onClick={() => {
+                goDetails(item.fullname)
+              }}
+              src="https://gw.alipayobjects.com/zos/rmsportal/mqaQswcyDLcXyDKnZfES.png"
+            />
+          }>
+          {/* {console.log(item)} */}
+          <List.Item.Meta
+            avatar={<Avatar src={item.avatar} />}
+            title={<a href={item.href}>{item.title}</a>}
+            description={item.description}
           />
-        }
-      >
-        <List.Item.Meta
-          avatar={<Avatar src={item.avatar} />}
-          title={<a href={item.href}>{item.title}</a>}
-          description={item.description}
-        />
-        {item.content}
-      </List.Item>
-    )}
-  />
-);
+          <b
+            onClick={() => {
+              goDetails(item.fullname)
+            }}>
+            {item.fullname}
+          </b>
+        </List.Item>
+      )}
+    />
+  )
+}
 
-export default FooterLayout;
+export default FooterLayout
