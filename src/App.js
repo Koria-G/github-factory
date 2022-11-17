@@ -13,10 +13,10 @@ function App () {
         <Link to='login'>登录</Link> */}
         <Routes>
           {/* 只有登录成功才能进入layout界面 */}
-          <Route path='/' element={
+          <Route path='/layout' element={
             <GeekLayout />
           } />
-          <Route path='login' element={<Login />} index />
+          <Route path='/' element={<Login />} index />
           <Route path='details' element={<Laylist />} />
         </Routes>
       </div>
