@@ -12,7 +12,10 @@ const Login = () => {
   const onFinish = values => {
     const { mobile, code } = values
     if (mobile === '15760217648' && code === '123456') {
-      navigate('/')
+      // 把数据存储到localStorage
+      window.localStorage.setItem('mobile', mobile)
+      window.localStorage.setItem('code', code)
+      navigate('/layout')
     }
     else { message.error('登录失败') }
     console.log(values)
@@ -45,10 +48,10 @@ const Login = () => {
           <Form.Item
             name="code"
             rules={[
-              { len: 6, message: '验证码6个字符', validateTrigger: 'onBlur' },
-              { required: true, message: '请输入验证码' }
+              { len: 6, message: '密码6个字符', validateTrigger: 'onBlur' },
+              { required: true, message: '请输入密码' }
             ]}>
-            <Input size="large" placeholder="请输入验证码" maxLength={6} />
+            <Input size="large" placeholder="请输入密码" maxLength={6} />
           </Form.Item>
           <Form.Item name="remember" valuePropName='checked'>
             <Checkbox className="login-checkbox-label">
