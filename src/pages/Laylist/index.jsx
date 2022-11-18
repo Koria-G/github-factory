@@ -5,7 +5,7 @@ import './index.css'
 import { Layout, Menu, Popconfirm } from 'antd'
 import { HomeOutlined, DiffOutlined, LogoutOutlined } from '@ant-design/icons'
 
-import { Link, useNavigate } from 'react-router-dom'
+import {  useNavigate } from 'react-router-dom'
 
 const { Header, Sider } = Layout
 
