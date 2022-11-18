@@ -16,7 +16,7 @@ const InputHeader: React.FC = () => {
   // 发送数据
   PubSub.publish('results', results)
 
-  // 利用styled-components创建一个title组件
+  // 利用styled-components创建一个title组件 */}
   const Title = styled.h1`
     text-align: center;
     color: white;

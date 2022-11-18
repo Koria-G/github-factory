@@ -1,4 +1,4 @@
-import { Card } from 'antd'
+import { Card, Spin } from 'antd'
 import axios from 'axios'
 import React, { useEffect, useState } from 'react'
 import { useLocation } from 'react-router-dom'
@@ -39,12 +39,14 @@ const Layoutlist: React.FC = () => {
   // console.log(location.state.fullname)
   const [res1, setRes1] = useState({})
   const [res2, setRes2] = useState([])
+  const [show, setShow] = useState(true)
 
   // 发送axios请求，在请求一次数据获取时间
   useEffect(() => {
     ;(async function () {
       const res = await axios.get(`https://api.github.com/repos/${path}`)
       console.log(res)
+      setShow(!show)
       setRes1(res.data)
     })()
   }, [])
@@ -56,6 +58,7 @@ const Layoutlist: React.FC = () => {
         `https://api.github.com/repos/${path}/contents`
       )
       console.log(res)
+      setShow(!show)
       setRes2(res.data)
     })()
   }, [])
@@ -72,6 +75,7 @@ const Layoutlist: React.FC = () => {
 
   return (
     <div className="site-card-wrapper">
+      {show && <Spin />}
       <div
         style={{
           display: 'flex',
@@ -79,7 +83,7 @@ const Layoutlist: React.FC = () => {
           alignItems: 'center',
         }}>
         <h1 style={{ fontSize: 24, paddingLeft: 240 }}>
-          厂库名称: {res1.name}/{res1.visibility}
+          仓库名称: {res1.name}/{res1.visibility}
         </h1>
         <Card title="仓库时间列表" bordered={true}>
           创建时间:{dayjs(res1.created_at).format('YYYY-MM-DD HH:mm:ss')}
@@ -90,6 +94,7 @@ const Layoutlist: React.FC = () => {
           <br />
         </Card>
       </div>
+
       <Table columns={columns} dataSource={data} />
     </div>
   )
